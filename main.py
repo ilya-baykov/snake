@@ -30,7 +30,14 @@ x = int(WIDTH / 2) + size_block / 2
 y = int(HEIGHT / 2)
 speed = 5
 radius = 15
+counter = 1
 running = True
+
+
+def drawer(cnt):
+    pygame.draw.circle(screen, (255, 0, 0), (x + (radius * cnt), y), radius)
+
+
 while running and x < WIDTH - 20 and y < HEIGHT - 20 and x > 20 and y > 20:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -49,13 +56,15 @@ while running and x < WIDTH - 20 and y < HEIGHT - 20 and x > 20 and y > 20:
         y += speed
     pygame.display.update()
     draw_field()
+    for i in range(1, counter + 1):
+        drawer(i)
     pygame.draw.circle(screen, (0, 0, 255), (fruit_x, fruit_y), 15)
-    pygame.draw.circle(screen, (255, 0, 0), (x, y), radius)
-    if abs(fruit_x - x - radius) < 38 and abs(fruit_y - y - radius) < 38:
+
+    if abs(fruit_x - (x + radius)) < 38 and abs(fruit_y - (y + radius)) < 38:
         print("Фрукт съеден")
-        radius += 10
         fruit_x = random.randint(0, WIDTH - 20)
         fruit_y = random.randint(0, HEIGHT - 20)
+        counter += 1
         speed += 1
     clock.tick(30)
 print("Конец игры")
