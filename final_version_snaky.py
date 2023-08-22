@@ -32,10 +32,23 @@ class GameField:
 
 class Snaky:
     SIZE_BOX = 50
-    START_POSITION = [(50, 50), (50, 80), (50, 110), (50, 140)]
+    SNAKY_COORDINATES = [(50, 50), (50, 80), (50, 110), (50, 140)]
 
-    def move(self):
-        pass
+    @classmethod
+    def move(cls, way_to_turn: str, eat_check: bool):
+        head_x, head_y = cls.SNAKY_COORDINATES[0][0], cls.SNAKY_COORDINATES[0][1]
+        if way_to_turn == "right":
+            cls.SNAKY_COORDINATES.insert(0, (head_x + Snaky.SIZE_BOX, head_y))
+        elif way_to_turn == "left":
+            cls.SNAKY_COORDINATES.insert(0, (head_x - Snaky.SIZE_BOX, head_y))
+        elif way_to_turn == "up":
+            cls.SNAKY_COORDINATES.insert(0, (head_x, head_y - Snaky.SIZE_BOX))
+        elif way_to_turn == "down":
+            cls.SNAKY_COORDINATES.insert(0, (head_x, head_y + Snaky.SIZE_BOX))
+        if eat_check:
+            pass
+        else:
+            del cls.SNAKY_COORDINATES[-1]
 
     def growth_by_eating(self):
         pass
@@ -75,3 +88,4 @@ while running:
         Fruit.fruit_coordinates()
         Fruit.fruit_spawn()
         on_display = not on_display
+    Snaky.move("right", False)
