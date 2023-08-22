@@ -5,7 +5,6 @@ import time
 import pygame
 
 pygame.init()
-
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(name_game)
 
@@ -27,12 +26,11 @@ class GameField:
 
                 pygame.draw.rect(screen, color,
                                  (i * cls.SIZE_BLOCK, j * cls.SIZE_BLOCK, cls.SIZE_BLOCK, cls.SIZE_BLOCK))
-            pygame.display.update()
 
 
 class Snaky:
     SIZE_BOX = 50
-    SNAKY_COORDINATES = [(50, 50), (50, 80), (50, 110), (50, 140)]
+    SNAKY_COORDINATES = [(50, 50), (50, 100), (50, 150), (50, 200)]
 
     @classmethod
     def move(cls, way_to_turn: str, eat_check: bool):
@@ -45,20 +43,17 @@ class Snaky:
             cls.SNAKY_COORDINATES.insert(0, (head_x, head_y - Snaky.SIZE_BOX))
         elif way_to_turn == "down":
             cls.SNAKY_COORDINATES.insert(0, (head_x, head_y + Snaky.SIZE_BOX))
-        if eat_check:
-            pass
-        else:
+        if not eat_check:
             del cls.SNAKY_COORDINATES[-1]
 
-    def growth_by_eating(self):
-        pass
-
-    def draw(self):
-        pass
+    @classmethod
+    def draw(cls):
+        for elem in range(len(cls.SNAKY_COORDINATES)):
+            pygame.draw.rect(screen, RED, (*cls.SNAKY_COORDINATES[elem], Snaky.SIZE_BOX, Snaky.SIZE_BOX), 5)
 
 
 class Fruit:
-    COLORS_FRUIT = [RED, BLUE, BLACK]
+    color_fruit = ""
     fruit_x, fruit_y = 0, 0
 
     @classmethod
@@ -67,25 +62,43 @@ class Fruit:
                                        WIDTH - 50) // Snaky.SIZE_BOX) * Snaky.SIZE_BOX) - Snaky.SIZE_BOX / 2
         cls.fruit_y = (random.randint(Snaky.SIZE_BOX + 50,
                                       HEIGHT - 50) // Snaky.SIZE_BOX) * Snaky.SIZE_BOX - Snaky.SIZE_BOX / 2
-        print(cls.fruit_x)
-        print(cls.fruit_y)
+        cls.color_fruit = random.choice([RED, BLUE, BLACK])
 
     @classmethod
     def fruit_spawn(cls):
-        pygame.draw.circle(screen, random.choice(cls.COLORS_FRUIT), (cls.fruit_x, cls.fruit_y), Snaky.SIZE_BOX // 4)
-        pygame.display.update()
+        pygame.draw.circle(screen, random.choice(cls.color_fruit), (cls.fruit_x, cls.fruit_y), Snaky.SIZE_BOX // 4)
 
 
-GameField.draw_field()
-on_display = True
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            running = False
-    if on_display:
-        Fruit.fruit_coordinates()
-        Fruit.fruit_spawn()
-        on_display = not on_display
-    Snaky.move("right", False)
+class GameLoop:
+    on_display = True
+    running = True
+    button = "right"
+
+    def __init__(self):
+        GameField.draw_field()
+        while GameLoop.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    GameLoop.running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT or event.key == ord('d') and GameLoop.button != "left":
+                        GameLoop.button = "right"
+                    elif event.key == pygame.K_LEFT or event.key == ord('a') and GameLoop.button != "right":
+                        GameLoop.button = "left"
+                    elif event.key == pygame.K_UP or event.key == ord('w') and GameLoop.button != "down":
+                        GameLoop.button = "up"
+                    elif event.key == pygame.K_DOWN or event.key == ord('s') and GameLoop.button != "up":
+                        GameLoop.button = "down"
+                if GameLoop.on_display:
+                    Fruit.fruit_coordinates()
+                    GameLoop.on_display = False
+            Fruit.fruit_spawn()
+            Snaky.move(GameLoop.button, False)
+            Snaky.draw()
+            pygame.display.update()
+            time.sleep(0.1)
+            GameField.draw_field()
+
+
+start_game = GameLoop()
