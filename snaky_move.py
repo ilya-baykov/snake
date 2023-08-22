@@ -11,7 +11,7 @@ fruit_x = random.randint(0, 800)
 fruit_y = random.randint(0, 600)
 
 
-def move(_lst, where):
+def move(_lst, where, more_sigment):
     lst = []
     if where == "right":
         lst = [[_lst[0][0] + 20, _lst[0][1]]]
@@ -24,6 +24,8 @@ def move(_lst, where):
 
     for elem in range(1, len(_lst)):
         lst.append(_lst[elem - 1])
+    if more_sigment:
+        lst.append(_lst[len(_lst) - 1])
     return lst
 
 
@@ -59,5 +61,7 @@ while running:
     if abs(snaky_coordinate[0][0] - fruit_x) < 20 and abs(snaky_coordinate[0][1] - fruit_y) < 20:
         fruit_x = random.randint(0, 800)
         fruit_y = random.randint(0, 600)
-    snaky_coordinate = move(snaky_coordinate, button)
+        snaky_coordinate = move(snaky_coordinate, button, True)
+    else:
+        snaky_coordinate = move(snaky_coordinate, button,False)
     draw_snaky(snaky_coordinate)
