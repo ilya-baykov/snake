@@ -4,23 +4,26 @@ import time
 import pygame
 
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
-snaky_coordinate = [[50, 50], [50, 70], [50, 90], [50, 110]]
+WIDTH = 800
+HEIGHT = 600
+SIZE_BOX = 30
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+snaky_coordinate = [[50, 50], [50, 80], [50, 110], [50, 140]]
 
-fruit_x = random.randint(0, 750)
-fruit_y = random.randint(0, 550)
+fruit_x = random.randint(0, 730)
+fruit_y = random.randint(0, 530)
 
 
 def move(_lst, where, more_sigment):
     lst = []
     if where == "right":
-        lst = [[_lst[0][0] + 20, _lst[0][1]]]
+        lst = [[_lst[0][0] + SIZE_BOX, _lst[0][1]]]
     elif where == "left":
-        lst = [[_lst[0][0] - 20, _lst[0][1]]]
+        lst = [[_lst[0][0] - SIZE_BOX, _lst[0][1]]]
     elif where == "up":
-        lst = [[_lst[0][0], _lst[0][1] - 20]]
+        lst = [[_lst[0][0], _lst[0][1] - SIZE_BOX]]
     elif where == "down":
-        lst = [[_lst[0][0], _lst[0][1] + 20]]
+        lst = [[_lst[0][0], _lst[0][1] + SIZE_BOX]]
 
     for elem in range(1, len(_lst)):
         lst.append(_lst[elem - 1])
@@ -32,8 +35,7 @@ def move(_lst, where, more_sigment):
 def draw_snaky(coordinates: list):
     screen.fill((0, 0, 0))
     for i in range(len(coordinates)):
-        pygame.draw.rect(screen, (255, 0, 0), (*coordinates[i], 20, 20), 3)
-        # time.sleep(0.03)
+        pygame.draw.rect(screen, (255, 0, 0), (*coordinates[i], SIZE_BOX, SIZE_BOX), 3)
     pygame.draw.circle(screen, (0, 0, 255), (fruit_x, fruit_y), 10, 2)
     pygame.display.update()
 
@@ -51,9 +53,9 @@ def game_over():
     if snaky_coordinate[0][0] > 800 or snaky_coordinate[0][0] < 0 or snaky_coordinate[0][1] > 600 or \
             snaky_coordinate[0][1] < 10:
         return True
-    head = pygame.Rect(snaky_coordinate[0][0], snaky_coordinate[0][1], 20, 20)
+    head = pygame.Rect(snaky_coordinate[0][0], snaky_coordinate[0][1], SIZE_BOX, SIZE_BOX)
     for coord in range(1, len(snaky_coordinate)):
-        if pygame.Rect(head).colliderect(*snaky_coordinate[coord], 20, 20):
+        if pygame.Rect(head).colliderect(*snaky_coordinate[coord], SIZE_BOX, SIZE_BOX):
             return True
     return False
 
@@ -66,16 +68,21 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if (event.key == pygame.K_RIGHT or event.key == ord('d')) and button != "left":
                 button = "right"
+                continue
             elif (event.key == pygame.K_LEFT or event.key == ord('a')) and button != "right":
                 button = "left"
+                continue
             elif (event.key == pygame.K_UP or event.key == ord('w')) and button != "down":
                 button = "up"
+                continue
             elif (event.key == pygame.K_DOWN or event.key == ord('s')) and button != "up":
                 button = "down"
+                continue
 
-    if pygame.Rect(*snaky_coordinate[0], 20, 20).colliderect(pygame.Rect(fruit_x - 10, fruit_y - 10, 20, 20)):
-        fruit_x = random.randint(0, 720)
-        fruit_y = random.randint(0, 520)
+    if pygame.Rect(*snaky_coordinate[0], SIZE_BOX, SIZE_BOX).colliderect(
+            pygame.Rect(fruit_x - 10, fruit_y - 10, SIZE_BOX, SIZE_BOX)):
+        fruit_x = random.randint(50, 750)
+        fruit_y = random.randint(50, 550)
         snaky_coordinate = move(snaky_coordinate, button, True)
         counter += 1
         game_difficulty = game_difficulty * 0.95
