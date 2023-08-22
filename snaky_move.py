@@ -44,7 +44,7 @@ running = True
 button = "right"
 on_display = False
 game_difficulty = 0.1
-
+counter = 0
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -59,10 +59,11 @@ while running:
                 button = "up"
             elif event.key == pygame.K_DOWN and button != "up":
                 button = "down"
-    if abs(snaky_coordinate[0][0] - fruit_x) < 20 and abs(snaky_coordinate[0][1] - fruit_y) < 20:
+    if pygame.Rect(*snaky_coordinate[0], 20, 20).colliderect(pygame.Rect(fruit_x - 10, fruit_y - 10, 20, 20)):
         fruit_x = random.randint(0, 750)
-        fruit_y = random.randint(0, 650)
+        fruit_y = random.randint(0, 550)
         snaky_coordinate = move(snaky_coordinate, button, True)
+        counter += 1
         game_difficulty = game_difficulty * 0.95
     else:
         snaky_coordinate = move(snaky_coordinate, button, False)
@@ -70,6 +71,7 @@ while running:
     if snaky_coordinate[0][0] > 800 or snaky_coordinate[0][0] < 0 or snaky_coordinate[0][1] > 600 or \
             snaky_coordinate[0][1] < 10:
         print("КОНЕЦ ИГРЫ!")
+        print("Ваш счет - ", counter)
         running = False
         break
     time.sleep(game_difficulty)
