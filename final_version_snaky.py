@@ -49,7 +49,7 @@ class Snaky:
     @classmethod
     def draw(cls):
         for elem in range(len(cls.SNAKY_COORDINATES)):
-            pygame.draw.rect(screen, RED, (*cls.SNAKY_COORDINATES[elem], Snaky.SIZE_BOX, Snaky.SIZE_BOX), 5)
+            pygame.draw.rect(screen, RED, (*cls.SNAKY_COORDINATES[elem], Snaky.SIZE_BOX, Snaky.SIZE_BOX), )
 
 
 class Fruit:
@@ -70,31 +70,31 @@ class Fruit:
 
 
 class GameLoop:
-    on_display = True
-    running = True
-    button = "right"
 
     def __init__(self):
         GameField.draw_field()
-        while GameLoop.running:
+        self.on_display = True
+        self.running = True
+        self.button = "right"
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    GameLoop.running = False
+                    self.running = False
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT or event.key == ord('d') and GameLoop.button != "left":
-                        GameLoop.button = "right"
-                    elif event.key == pygame.K_LEFT or event.key == ord('a') and GameLoop.button != "right":
-                        GameLoop.button = "left"
-                    elif event.key == pygame.K_UP or event.key == ord('w') and GameLoop.button != "down":
-                        GameLoop.button = "up"
-                    elif event.key == pygame.K_DOWN or event.key == ord('s') and GameLoop.button != "up":
-                        GameLoop.button = "down"
-                if GameLoop.on_display:
+                    if (event.key == pygame.K_RIGHT or event.key == ord('d')) and self.button != "left":
+                        self.button = "right"
+                    elif (event.key == pygame.K_LEFT or event.key == ord('a')) and self.button != "right":
+                        self.button = "left"
+                    elif (event.key == pygame.K_UP or event.key == ord('w')) and self.button != "down":
+                        self.button = "up"
+                    elif (event.key == pygame.K_DOWN or event.key == ord('s')) and self.button != "up":
+                        self.button = "down"
+                if self.on_display:
                     Fruit.fruit_coordinates()
-                    GameLoop.on_display = False
+                    self.on_display = False
             Fruit.fruit_spawn()
-            Snaky.move(GameLoop.button, False)
+            Snaky.move(self.button, False)
             Snaky.draw()
             pygame.display.update()
             time.sleep(0.1)
