@@ -76,23 +76,29 @@ class GameLoop:
         self.on_display = True
         self.running = True
         self.button = "right"
+        self.game_cycle()
+
+    def click_handling(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if (event.key == pygame.K_RIGHT or event.key == ord('d')) and self.button != "left":
+                    self.button = "right"
+                elif (event.key == pygame.K_LEFT or event.key == ord('a')) and self.button != "right":
+                    self.button = "left"
+                elif (event.key == pygame.K_UP or event.key == ord('w')) and self.button != "down":
+                    self.button = "up"
+                elif (event.key == pygame.K_DOWN or event.key == ord('s')) and self.button != "up":
+                    self.button = "down"
+
+    def game_cycle(self):
         while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    self.running = False
-                elif event.type == pygame.KEYDOWN:
-                    if (event.key == pygame.K_RIGHT or event.key == ord('d')) and self.button != "left":
-                        self.button = "right"
-                    elif (event.key == pygame.K_LEFT or event.key == ord('a')) and self.button != "right":
-                        self.button = "left"
-                    elif (event.key == pygame.K_UP or event.key == ord('w')) and self.button != "down":
-                        self.button = "up"
-                    elif (event.key == pygame.K_DOWN or event.key == ord('s')) and self.button != "up":
-                        self.button = "down"
-                if self.on_display:
-                    Fruit.fruit_coordinates()
-                    self.on_display = False
+            self.click_handling()
+            if self.on_display:
+                Fruit.fruit_coordinates()
+                self.on_display = False
             Fruit.fruit_spawn()
             Snaky.move(self.button, False)
             Snaky.draw()
