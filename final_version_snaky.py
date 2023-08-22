@@ -62,11 +62,11 @@ class Fruit:
                                        WIDTH - 50) // Snaky.SIZE_BOX) * Snaky.SIZE_BOX) - Snaky.SIZE_BOX / 2
         cls.fruit_y = (random.randint(Snaky.SIZE_BOX + 50,
                                       HEIGHT - 50) // Snaky.SIZE_BOX) * Snaky.SIZE_BOX - Snaky.SIZE_BOX / 2
-        cls.color_fruit = random.choice([RED, BLUE, BLACK])
+        cls.color_fruit = random.choice([RED, BLUE, BLACK, WHITE, PURPLE])
 
     @classmethod
     def fruit_spawn(cls):
-        pygame.draw.circle(screen, random.choice(cls.color_fruit), (cls.fruit_x, cls.fruit_y), Snaky.SIZE_BOX // 4)
+        pygame.draw.circle(screen, cls.color_fruit, (cls.fruit_x, cls.fruit_y), Snaky.SIZE_BOX // 4)
 
 
 class GameLoop:
