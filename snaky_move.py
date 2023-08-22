@@ -7,8 +7,8 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 snaky_coordinate = [[50, 50], [50, 70], [50, 90], [50, 110]]
 
-fruit_x = random.randint(0, 800)
-fruit_y = random.randint(0, 600)
+fruit_x = random.randint(0, 750)
+fruit_y = random.randint(0, 550)
 
 
 def move(_lst, where, more_sigment):
@@ -33,7 +33,7 @@ def draw_snaky(coordinates: list):
     screen.fill((0, 0, 0))
     for i in range(len(coordinates)):
         pygame.draw.rect(screen, (255, 0, 0), (*coordinates[i], 20, 20), 3)
-        time.sleep(0.03)
+        # time.sleep(0.03)
     pygame.draw.circle(screen, (0, 0, 255), (fruit_x, fruit_y), 10, 2)
     pygame.display.update()
 
@@ -43,6 +43,7 @@ draw_snaky(snaky_coordinate)
 running = True
 button = "right"
 on_display = False
+game_difficulty = 0.1
 
 while running:
     for event in pygame.event.get():
@@ -59,9 +60,16 @@ while running:
             elif event.key == pygame.K_DOWN and button != "up":
                 button = "down"
     if abs(snaky_coordinate[0][0] - fruit_x) < 20 and abs(snaky_coordinate[0][1] - fruit_y) < 20:
-        fruit_x = random.randint(0, 800)
-        fruit_y = random.randint(0, 600)
+        fruit_x = random.randint(0, 750)
+        fruit_y = random.randint(0, 650)
         snaky_coordinate = move(snaky_coordinate, button, True)
+        game_difficulty = game_difficulty * 0.95
     else:
-        snaky_coordinate = move(snaky_coordinate, button,False)
+        snaky_coordinate = move(snaky_coordinate, button, False)
     draw_snaky(snaky_coordinate)
+    if snaky_coordinate[0][0] > 800 or snaky_coordinate[0][0] < 0 or snaky_coordinate[0][1] > 600 or \
+            snaky_coordinate[0][1] < 10:
+        print("КОНЕЦ ИГРЫ!")
+        running = False
+        break
+    time.sleep(game_difficulty)
