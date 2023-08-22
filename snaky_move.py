@@ -64,18 +64,18 @@ while running:
             pygame.quit()
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT and button != "left":
+            if (event.key == pygame.K_RIGHT or event.key == ord('d')) and button != "left":
                 button = "right"
-            elif event.key == pygame.K_LEFT and button != "right":
+            elif (event.key == pygame.K_LEFT or event.key == ord('a')) and button != "right":
                 button = "left"
-            elif event.key == pygame.K_UP and button != "down":
+            elif (event.key == pygame.K_UP or event.key == ord('w')) and button != "down":
                 button = "up"
-            elif event.key == pygame.K_DOWN and button != "up":
+            elif (event.key == pygame.K_DOWN or event.key == ord('s')) and button != "up":
                 button = "down"
 
     if pygame.Rect(*snaky_coordinate[0], 20, 20).colliderect(pygame.Rect(fruit_x - 10, fruit_y - 10, 20, 20)):
-        fruit_x = random.randint(0, 730)
-        fruit_y = random.randint(0, 530)
+        fruit_x = random.randint(0, 720)
+        fruit_y = random.randint(0, 520)
         snaky_coordinate = move(snaky_coordinate, button, True)
         counter += 1
         game_difficulty = game_difficulty * 0.95
