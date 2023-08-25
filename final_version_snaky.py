@@ -7,6 +7,7 @@ import pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(name_game)
+font = pygame.font.Font(None, 22)
 
 
 class GameField:
@@ -53,8 +54,8 @@ class Snaky:
 
 
 class Fruit:
-    color_fruit = ""
-    fruit_x, fruit_y = 0, 0
+    color_fruit = BLUE
+    fruit_x, fruit_y = 150 + Snaky.SIZE_BOX // 2, 150 + Snaky.SIZE_BOX // 2
 
     @classmethod
     def fruit_coordinates(cls):
@@ -72,10 +73,10 @@ class Fruit:
 class GameLoop:
 
     def __init__(self):
-        GameField.draw_field()
-        self.on_display = True
+        self.score = 0
         self.running = True
         self.button = "right"
+        GameField.draw_field()
         self.game_cycle()
 
     def click_handling(self):
@@ -102,15 +103,12 @@ class GameLoop:
     def game_cycle(self):
         while self.running:
             self.click_handling()
-            if self.on_display:
+            if self.fruit_eating_check():
                 Fruit.fruit_coordinates()
-                self.on_display = False
             Fruit.fruit_spawn()
             Snaky.move(self.button, False)
             Snaky.draw()
             pygame.display.update()
-            if self.fruit_eating_check():
-                self.on_display = True
             time.sleep(0.1)
             GameField.draw_field()
 
