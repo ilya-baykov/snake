@@ -96,21 +96,36 @@ class GameLoop:
 
     @staticmethod
     def fruit_eating_check():
-        head = Snaky.SNAKY_COORDINATES[0]
-        return pygame.Rect(*head, Snaky.SIZE_BOX, Snaky.SIZE_BOX).colliderect(
+        return pygame.Rect(*Snaky.SNAKY_COORDINATES[0], Snaky.SIZE_BOX, Snaky.SIZE_BOX).colliderect(
             pygame.Rect(Fruit.fruit_x, Fruit.fruit_y, Snaky.SIZE_BOX // 2, Snaky.SIZE_BOX // 2))
+
+    def game_over(self):
+        if not (WIDTH > Snaky.SNAKY_COORDINATES[0][0] > -Snaky.SIZE_BOX):
+            return True
+        head = pygame.Rect(Snaky.SNAKY_COORDINATES[0][0], Snaky.SNAKY_COORDINATES[0][1], Snaky.SIZE_BOX, Snaky.SIZE_BOX)
+        for elem in range(1, len(Snaky.SNAKY_COORDINATES)):
+            if head.colliderect(
+                    pygame.Rect(Snaky.SNAKY_COORDINATES[elem][0], Snaky.SNAKY_COORDINATES[elem][1], Snaky.SIZE_BOX,
+                                Snaky.SIZE_BOX)):
+                return True
+        return False
 
     def game_cycle(self):
         while self.running:
             self.click_handling()
+            text = font.render("SCORE:" + str(self.score), True, RED)
             if self.fruit_eating_check():
                 Fruit.fruit_coordinates()
+                self.score += 1
             Fruit.fruit_spawn()
             Snaky.move(self.button, False)
+            if self.game_over():
+                raise "Ты проиграл"
             Snaky.draw()
             pygame.display.update()
             time.sleep(0.1)
             GameField.draw_field()
+            screen.blit(text, (10, 20))
 
 
 start_game = GameLoop()
