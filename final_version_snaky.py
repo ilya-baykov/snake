@@ -93,6 +93,12 @@ class GameLoop:
                 elif (event.key == pygame.K_DOWN or event.key == ord('s')) and self.button != "up":
                     self.button = "down"
 
+    @staticmethod
+    def fruit_eating_check():
+        head = Snaky.SNAKY_COORDINATES[0]
+        return pygame.Rect(*head, Snaky.SIZE_BOX, Snaky.SIZE_BOX).colliderect(
+            pygame.Rect(Fruit.fruit_x, Fruit.fruit_y, Snaky.SIZE_BOX // 2, Snaky.SIZE_BOX // 2))
+
     def game_cycle(self):
         while self.running:
             self.click_handling()
@@ -103,6 +109,8 @@ class GameLoop:
             Snaky.move(self.button, False)
             Snaky.draw()
             pygame.display.update()
+            if self.fruit_eating_check():
+                self.on_display = True
             time.sleep(0.1)
             GameField.draw_field()
 
