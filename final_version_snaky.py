@@ -117,6 +117,7 @@ class GameLoop:
             if self.fruit_eating_check():
                 Fruit.fruit_coordinates()
                 self.score += 1
+                Snaky.move(self.button, True)
             Fruit.fruit_spawn()
             Snaky.move(self.button, False)
             if self.game_over():
