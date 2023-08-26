@@ -100,7 +100,9 @@ class GameLoop:
             pygame.Rect(Fruit.fruit_x, Fruit.fruit_y, Snaky.SIZE_BOX // 2, Snaky.SIZE_BOX // 2))
 
     def game_over(self):
-        if not (WIDTH > Snaky.SNAKY_COORDINATES[0][0] > -Snaky.SIZE_BOX):
+        if not (WIDTH > Snaky.SNAKY_COORDINATES[0][0] > -Snaky.SIZE_BOX):  # Выход за границы по горизонтали
+            return True
+        if not (HEIGHT > Snaky.SNAKY_COORDINATES[0][1] > -Snaky.SIZE_BOX):  # Выход за границы по вертекали
             return True
         head = pygame.Rect(Snaky.SNAKY_COORDINATES[0][0], Snaky.SNAKY_COORDINATES[0][1], Snaky.SIZE_BOX, Snaky.SIZE_BOX)
         for elem in range(1, len(Snaky.SNAKY_COORDINATES)):
