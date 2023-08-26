@@ -16,10 +16,9 @@ class GameField:
 
     @classmethod
     def draw_field(cls):
-        color = None
         """Создает игровое поле, в виде шахматной доски """
-        for i in range(WIDTH // cls.SIZE_BLOCK):
-            for j in range(HEIGHT // cls.SIZE_BLOCK):
+        for i in range(WIDTH // cls.SIZE_BLOCK + 1):
+            for j in range(HEIGHT // cls.SIZE_BLOCK + 1):
                 if (i + j) % 2 == 0:
                     color = DARK_GREEN
                 else:
@@ -55,19 +54,38 @@ class Snaky:
 
 class Fruit:
     color_fruit = BLUE
-    fruit_x, fruit_y = 150 + Snaky.SIZE_BOX // 2, 150 + Snaky.SIZE_BOX // 2
+    fruit_x, fruit_y = Snaky.SIZE_BOX * 3 + Snaky.SIZE_BOX // 2, Snaky.SIZE_BOX * 3 + Snaky.SIZE_BOX // 2
 
     @classmethod
     def fruit_coordinates(cls):
-        cls.fruit_x = ((random.randint(Snaky.SIZE_BOX + 50,
-                                       WIDTH - 50) // Snaky.SIZE_BOX) * Snaky.SIZE_BOX) - Snaky.SIZE_BOX / 2
-        cls.fruit_y = (random.randint(Snaky.SIZE_BOX + 50,
-                                      HEIGHT - 50) // Snaky.SIZE_BOX) * Snaky.SIZE_BOX - Snaky.SIZE_BOX / 2
+        rand_x = (random.randint(Snaky.SIZE_BOX, WIDTH - Snaky.SIZE_BOX))
+        rand_y = (random.randint(Snaky.SIZE_BOX, HEIGHT - Snaky.SIZE_BOX))
+        cls.fruit_x = (rand_x - rand_x % Snaky.SIZE_BOX) + Snaky.SIZE_BOX // 2
+        cls.fruit_y = (rand_y - rand_y % Snaky.SIZE_BOX) + Snaky.SIZE_BOX // 2
         cls.color_fruit = random.choice([RED, BLUE, BLACK, WHITE, PURPLE])
 
     @classmethod
     def fruit_spawn(cls):
         pygame.draw.circle(screen, cls.color_fruit, (cls.fruit_x, cls.fruit_y), Snaky.SIZE_BOX // 4)
+
+
+class GameChanger:
+    lvl = 1
+    speed = 0.1
+
+    @classmethod
+    def lvl_up(cls):
+        cls.lvl += 1
+        df = 5
+        if cls.lvl % 20 == 0:
+            for coord in range(len(Snaky.SNAKY_COORDINATES)):
+                Snaky.SNAKY_COORDINATES[coord] = (
+                    Snaky.SNAKY_COORDINATES[coord][0] // Snaky.SIZE_BOX * (Snaky.SIZE_BOX - df),
+                    Snaky.SNAKY_COORDINATES[coord][1] // Snaky.SIZE_BOX * (Snaky.SIZE_BOX - df))
+            Snaky.SIZE_BOX = Snaky.SIZE_BOX - df
+            GameField.SIZE_BLOCK = GameField.SIZE_BLOCK - df
+        elif cls.lvl % 5 == 0:
+            cls.speed = round(cls.speed * 0.95, 3)
 
 
 class GameLoop:
@@ -99,7 +117,8 @@ class GameLoop:
         return pygame.Rect(*Snaky.SNAKY_COORDINATES[0], Snaky.SIZE_BOX, Snaky.SIZE_BOX).colliderect(
             pygame.Rect(Fruit.fruit_x, Fruit.fruit_y, Snaky.SIZE_BOX // 2, Snaky.SIZE_BOX // 2))
 
-    def game_over(self):
+    @staticmethod
+    def game_over():
         if not (WIDTH > Snaky.SNAKY_COORDINATES[0][0] > -Snaky.SIZE_BOX):  # Выход за границы по горизонтали
             return True
         if not (HEIGHT > Snaky.SNAKY_COORDINATES[0][1] > -Snaky.SIZE_BOX):  # Выход за границы по вертекали
@@ -115,10 +134,12 @@ class GameLoop:
     def game_cycle(self):
         while self.running:
             self.click_handling()
-            text = font.render("SCORE:" + str(self.score), True, RED)
+            score_text = font.render("SCORE:" + str(self.score), True, RED)
+            lvl_text = font.render("lvl:" + str(GameChanger.lvl), True, RED)
             if self.fruit_eating_check():
+                self.score += GameChanger.lvl * 50
+                GameChanger.lvl_up()
                 Fruit.fruit_coordinates()
-                self.score += 1
                 Snaky.move(self.button, True)
             Fruit.fruit_spawn()
             Snaky.move(self.button, False)
@@ -126,9 +147,10 @@ class GameLoop:
                 raise "Ты проиграл"
             Snaky.draw()
             pygame.display.update()
-            time.sleep(0.1)
+            time.sleep(GameChanger.speed)
             GameField.draw_field()
-            screen.blit(text, (10, 20))
+            screen.blit(score_text, (10, 20))
+            screen.blit(lvl_text, (10, 30))
 
 
 start_game = GameLoop()
